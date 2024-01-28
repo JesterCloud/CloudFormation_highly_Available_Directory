@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Plantilla de CF para el despliegue de EC2
+
+Parameters:  # Permiten pasar valores externos a la plantilla
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id # NO SE NECESITA ESPESIFICAR EL SUBNET,pqcuando se cree el stack, me pedira elegir el subnet
+    Description: ID del subnet donde crear la EC2  
+
+Resources:
+  EC2RoleProfile: 
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles: 
+        - EC2Full
+
+  EC2Employee:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0a3c3a20c09d6f377
+      InstanceType: t2.micro
+      IamInstanceProfile: !Ref EC2RoleProfile # Vincula este perfil al rol existente EC2Full
+      SecurityGroupIds:
+        - sg-06045384ff4e2f18e
+      SubnetId: !Ref SubnetId # ESTO ES LO DE ARRIBA,Parameters
+      Tags:  
+        - Key: "Name"
+          Value: "EC2Employee"
+      UserData: 
+        Fn::Base64: |
+          #!/bin/bash -xe
+          wget https://aws-tc-largeobjects.s3-us-west-2.amazonaws.com/DEV-AWS-MO-GCNv2/FlaskApp.zip
+          unzip FlaskApp.zip
+          cd FlaskApp/
+          yum -y install python3-pip
+          pip install -r requirements.txt
+          yum -y install stress
+          export PHOTOS_BUCKET=s3bucketnameparaprobarladynamodbfotosymas
+          export AWS_DEFAULT_REGION=us-east-1
+          export DYNAMO_MODE=on
+          FLASK_APP=application.py /usr/local/bin/flask run --host=0.0.0.0 --port=80
+
+Outputs: # Devuelve el ID de la instancia EC2 que se ha creado, es OPCIONAL
+  InstanceId:
+    Value: !Ref EC2Employee
