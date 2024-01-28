@@ -69,7 +69,7 @@ Resources: # VPC
         - Key: Name
           Value: AppSubnetB
 
-  # ---------------------: DB Subnet
+  # ---------------------: DB Subnet IN THIS CASE was not used due to the use of a DynamoDB Table
   DbSubnetA: # Subnet de base de datos en AZ A
       Type: 'AWS::EC2::Subnet'
       Properties:
