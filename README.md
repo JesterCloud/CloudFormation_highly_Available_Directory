@@ -10,6 +10,6 @@ a Highly available web app that use different AWS services to run,like:
 - Application Load Balancerto balance the workload
 - AutoScaling Groups
 
- And other serviceslike IAM Roles and more, you can find my CloudFormation templates code on this REPOSITORY
+And other services like IAM Roles, launch templates and more, you can find my CloudFormation YAML templates code on this REPOSITORY
 
 On the folder AWS Console and Website running-Images you will find images of the AWS Console behavior and the web site responses
