@@ -3,7 +3,7 @@ Description: Crear un Security Group para EC2 en una VPC existente
 
 Parameters:
   MyVPC:
-    Description: vpc-0c88581639f2540f3 # Esto es pq la VPC NO esta dentro de esta plantilla, asi que necesito refereenciarla con un ID
+    Description: vpc-0000003  # VPC ID
     Type: AWS::EC2::VPC::Id
 
 Resources:
