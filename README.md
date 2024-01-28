@@ -1,11 +1,4 @@
-    /$$$$$$ /$$   /$$
-   /$$__  $| $$$ | $$
-  | $$  \ $| $$$$| $$
-  | $$  | $| $$ $$ $$
-  | $$  | $| $$  $$$$
-  | $$  | $| $$\  $$$
-  |  $$$$$$| $$ \  $$
-   \______/|__/  \__/ This is a AWS cloud based project, of a highly available web app directory using Load Balancers and Autoscaling Group it contains:
+This is a AWS cloud based project, of a highly available web app directory using Load Balancers and Autoscaling Group it contains:
 
 a Highly available web app that use different AWS services to run,like:
 - VPC with 6 subnets within 2 different AZ (us-east-1 and us-east-2) for high availability
@@ -21,6 +14,6 @@ And other services like IAM Roles, launch templates and more, you can find my Cl
 
 On the folder AWS Console and Website running-Images you will find images of the AWS Console behavior and the web site responses
 
-[![LinkedIn](https://www.linkedin.com/in/giogalindo470/)]
+[![LinkedIn](https://www.linkedin.com/in/giogalindo470)]
 
 
