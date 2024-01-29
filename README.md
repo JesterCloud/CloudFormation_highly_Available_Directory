@@ -26,6 +26,7 @@ The project incorporates other AWS services to enhance functionality, including 
 Within this repository, you will find:
 - **CloudFormation Templates**: The `CloudFormation` directory contains all the YAML templates used to define the AWS resources.
 - **AWS Console & Website Screenshots**: The `AWS Console and Website running-Images` directory provides a visual insight into the AWS Console's behavior and the web application's responses.
+
 [![LinkedIn](https://www.linkedin.com/in/giogalindo470/)](Tu-URL-de-LinkedIn)
 https://www.linkedin.com/in/giogalindo470/
 
