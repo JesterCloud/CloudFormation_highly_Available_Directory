@@ -1,4 +1,12 @@
-This is a AWS cloud based project, of a highly available web app directory using Load Balancers and Autoscaling Group it contains:
+**AWS cloud based project, of a highly available web app directory using Load Balancers and Autoscaling Group it contains: **
+
+# Highly Available AWS Cloud-Based Web Application
+
+## Introduction
+Welcome to our AWS-powered web application project, designed for high availability and resilience. This project leverages the robust AWS cloud infrastructure to deliver a seamless and scalable web service experience.
+
+## Architecture
+The application is archite
 
 a Highly available web app that use different AWS services to run,like:
 - VPC with 6 subnets within 2 different AZ (us-east-1 and us-east-2) for high availability
