@@ -4,7 +4,7 @@
 AWS-powered web application directory, designed for high availability and resilience.
 
 ## Architecture
-The application is architected for high availability across multiple Availability Zones (AZs) in the US East (N. Virginia `us-east-1`) and US East (Ohio `us-east-2`) regions, secure using SecurityGroups, NAT Gateway, Firewall ensuring reliable and consistent access.
+The application is architected for high availability insode a VPC across multiple Availability Zones (AZs) in the US East (N. Virginia `us-east-1`) and US East (Ohio `us-east-2`) regions for replication, secure using Firewall SecurityGroups, NAT Gateway ensuring reliable and consistent access using the services below:
 
 ### AWS Services
 - **Virtual Private Cloud (VPC)**: Configured with 6 subnets spanning 2 different AZs for redundancy and fault tolerance.
