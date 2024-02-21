@@ -1,0 +1,202 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation para crear una VPC básica
+
+Resources: # VPC
+  MyVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: MyVPC
+
+  MyInternetGateway: # IGW
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: MyInternetGateway
+
+  AttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref MyInternetGateway
+
+# ------------------------------------: Subnets  ---------------------------------------
+  MyPublicSubnetA: # SubnetA
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: us-east-1a
+      Tags:
+        - Key: Name
+          Value: MyPublicSubnetA
+
+  MyPublicSubnetB: # SubnetB
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.2.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: us-east-1b
+      Tags:
+        - Key: Name
+          Value: MyPublicSubnetB
+
+# ---------------------: Private Subnet
+  AppSubnetA: # Subnet Privada A
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: us-east-1a
+      Tags:
+        - Key: Name
+          Value: AppSubnetA
+
+  AppSubnetB: # Subnet Privada B
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.4.0/24
+      AvailabilityZone: us-east-1b
+      Tags:
+        - Key: Name
+          Value: AppSubnetB
+
+  # ---------------------: DB Subnet
+  DbSubnetA: # Subnet de base de datos en AZ A
+      Type: 'AWS::EC2::Subnet'
+      Properties:
+        VpcId: !Ref MyVPC
+        CidrBlock: 10.0.5.0/24
+        AvailabilityZone: us-east-1a
+        Tags:
+        - Key: Name
+          Value: DbSubnetA
+
+  DbSubnetB: # Subnet de base de datos en AZ B
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.6.0/24
+      AvailabilityZone: us-east-1b
+      Tags:
+        - Key: Name
+          Value: DbSubnetB
+
+# ---------------------: EIP y NAT parael Private Subnet  ---------------------------------------
+  ElasticIPForNATGatewayA:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+
+  ElasticIPForNATGatewayB:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+
+# NAT Gateway
+  NATGatewayA:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt ElasticIPForNATGatewayA.AllocationId
+      SubnetId: !Ref MyPublicSubnetA
+
+  NATGatewayB:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt ElasticIPForNATGatewayB.AllocationId
+      SubnetId: !Ref MyPublicSubnetB
+
+# ------------------------------------: Route Table (2para el private y 1 para elpublic)  ---------------------------------------
+  MyRouteTable: # RT Publico
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: Public RT
+
+  MyRoute: # Ruta Publica del Route Table
+    Type: 'AWS::EC2::Route'
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref MyRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref MyInternetGateway
+
+
+  PrivateRouteTableA: # RT Privado
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: Pritave RT-A
+
+  PrivateRouteA: # Ruta Privada
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableA
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGatewayA
+
+  PrivateRouteTableB: # RT Privado
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: Private RT-B
+
+  PrivateRouteB: # Ruta Privada
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableB
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGatewayB
+
+
+# ------------------------------------: Asociacion RT  ---------------------------------------
+  SubnetRouteTableAssociationA: # Asociacion de los Subnet a los RT
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref MyPublicSubnetA
+      RouteTableId: !Ref MyRouteTable # Aqui solo valaasociacion al RT original
+
+  SubnetRouteTableAssociationB:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref MyPublicSubnetB 
+      RouteTableId: !Ref MyRouteTable
+
+# Asociacion de los 2 private subnets a las 2 RT privadas(****Recuerda que son 3 RT)
+  SubnetPrivateRouteTableAssociationA:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref AppSubnetA
+      RouteTableId: !Ref PrivateRouteTableA
+
+  SubnetPrivateRouteTableAssociationB:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref AppSubnetB
+      RouteTableId: !Ref PrivateRouteTableB
+
+  SubnetDbRouteTableAssociationA: # DB Subnet A con la tabla de rutas privada
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref DbSubnetA
+      RouteTableId: !Ref PrivateRouteTableA
+
+  SubnetDbRouteTableAssociationB: # DB Subnet B con la tabla de rutas privada
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref DbSubnetB
+      RouteTableId: !Ref PrivateRouteTableB
