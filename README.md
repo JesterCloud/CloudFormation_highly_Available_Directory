@@ -1,6 +1,6 @@
 # Highly Available AWS Cloud-Based Web Application directory
 <p align="center">
-  <img src="AWS Console and Website running-Images/Load_Balancer.png" width="750"/>
+  <img src="AWS Console and Website running-Images/Load_Balancer.png" width="550"/>
 </p>
 
 ## Introduction
