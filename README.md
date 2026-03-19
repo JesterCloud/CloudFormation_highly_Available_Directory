@@ -2,6 +2,7 @@
 <p align="center">
   <img src="AWS Console and Website running-Images/Directory_Web_App04.png" width="750"/>
 </p>
+
 ## Introduction
 AWS-powered web application directory, designed for high availability and resilience.
 
